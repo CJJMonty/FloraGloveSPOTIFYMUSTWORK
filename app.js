@@ -35,9 +35,15 @@ app.get("/callback", async (req, res) => {
 
 app.get("/play", async (req, res) => {
   try {
+    // Refresh access token first
+    const data = await spotifyApi.refreshAccessToken();
+    spotifyApi.setAccessToken(data.body.access_token);
+
+    // Now try to play
     await spotifyApi.play();
     res.send("Playing");
   } catch (err) {
+    console.error(err);
     res.send("Error");
   }
 });
