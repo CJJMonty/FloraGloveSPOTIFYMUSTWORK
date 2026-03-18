@@ -24,6 +24,9 @@ app.get("/callback", async (req, res) => {
     const data = await spotifyApi.authorizationCodeGrant(code);
     spotifyApi.setAccessToken(data.body.access_token);
     spotifyApi.setRefreshToken(data.body.refresh_token);
+
+    console.log("REFRESH TOKEN:", data.body.refresh_token);   // <-- ADD THIS
+
     res.send("Spotify connected. You can close this window.");
   } catch (err) {
     res.send("Error during authentication");
