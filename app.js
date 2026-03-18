@@ -11,6 +11,10 @@ const spotifyApi = new SpotifyWebApi({
   redirectUri: process.env.REDIRECT_URI
 });
 
+if (process.env.SPOTIFY_REFRESH_TOKEN) {
+  spotifyApi.setRefreshToken(process.env.SPOTIFY_REFRESH_TOKEN);
+}
+
 app.get("/login", (req, res) => {
   const scopes = ["user-modify-playback-state", "user-read-playback-state"];
   const authorizeURL = spotifyApi.createAuthorizeURL(scopes);
