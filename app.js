@@ -71,35 +71,26 @@ app.get("/next", async (req, res) => {
 });
 app.get("/volume", async (req, res) => {
   try {
-    const volume = req.query.value;
+    const volume = parseInt(req.query.value);
 
-    if (!volume) {
-      return res.status(400).send("Missing volume value");
+    if (isNaN(volume)) {
+      return res.status(400).send("Missing or invalid volume value");
     }
 
-    const spotifyResponse = await fetch(
-      `https://api.spotify.com/v1/me/player/volume?volume_percent=${volume}`,
-      {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${access_token}`,
-          "Content-Type": "application/json"
-        }
-      }
-    );
+    // Refresh token first (just like your /play endpoint)
+    const data = await spotifyApi.refreshAccessToken();
+    spotifyApi.setAccessToken(data.body.access_token);
 
-    if (!spotifyResponse.ok) {
-      const errorText = await spotifyResponse.text();
-      console.error("Spotify error:", errorText);
-      return res.status(spotifyResponse.status).send(errorText);
-    }
+    // Set volume using the official Spotify API wrapper
+    await spotifyApi.setVolume(volume);
 
     res.send(`Volume set to ${volume}`);
   } catch (err) {
-    console.error("Server error:", err);
+    console.error("Volume error:", err);
     res.status(500).send("Server error while setting volume");
   }
 });
+
 
 
 app.listen(3000, () => console.log("Server running"));
