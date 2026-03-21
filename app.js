@@ -81,15 +81,16 @@ app.get("/volume", async (req, res) => {
     const data = await spotifyApi.refreshAccessToken();
     spotifyApi.setAccessToken(data.body.access_token);
 
-    // Set volume
-    await spotifyApi.setVolume(volume);
+    // Try setting volume
+    const result = await spotifyApi.setVolume(volume);
 
     res.send(`Volume set to ${volume}`);
   } catch (err) {
-    console.error("Volume error:", err);
-    res.status(500).send("Server error while setting volume");
+    console.error("VOLUME ERROR:", err);
+    res.status(500).send(JSON.stringify(err));
   }
 });
+
 
 
 
