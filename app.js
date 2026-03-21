@@ -69,5 +69,28 @@ app.get("/next", async (req, res) => {
     res.send("Error");
   }
 });
+app.get("/volume", async (req, res) => {
+  try {
+    const volume = req.query.value; // 0–100
+
+    if (!volume) {
+      return res.status(400).send("Missing volume value");
+    }
+
+    await fetch(`https://api.spotify.com/v1/me/player/volume?volume_percent=${volume}`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${access_token}`, // your existing token
+        "Content-Type": "application/json"
+      }
+    });
+
+    res.send(`Volume set to ${volume}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error setting volume");
+  }
+});
+
 
 app.listen(3000, () => console.log("Server running"));
