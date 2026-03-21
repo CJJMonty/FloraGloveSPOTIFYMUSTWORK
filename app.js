@@ -71,17 +71,17 @@ app.get("/next", async (req, res) => {
 });
 app.get("/volume", async (req, res) => {
   try {
-    const volume = parseInt(req.query.value);
+    const volume = Math.round(parseInt(req.query.value));
 
     if (isNaN(volume)) {
       return res.status(400).send("Missing or invalid volume value");
     }
 
-    // Refresh token first (just like your /play endpoint)
+    // Refresh token first
     const data = await spotifyApi.refreshAccessToken();
     spotifyApi.setAccessToken(data.body.access_token);
 
-    // Set volume using the official Spotify API wrapper
+    // Set volume
     await spotifyApi.setVolume(volume);
 
     res.send(`Volume set to ${volume}`);
@@ -90,6 +90,7 @@ app.get("/volume", async (req, res) => {
     res.status(500).send("Server error while setting volume");
   }
 });
+
 
 
 
